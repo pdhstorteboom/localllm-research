@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 )
 
-// ComputeHash berekent een SHA-256 checksum voor de aangeleverde bytes.
+// ComputeHash returns a SHA-256 checksum for the provided bytes.
 func ComputeHash(data []byte) string {
 	sum := sha256.Sum256(data)
 	return hex.EncodeToString(sum[:])

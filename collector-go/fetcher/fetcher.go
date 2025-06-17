@@ -12,9 +12,9 @@ import (
 	"time"
 )
 
-const maxDocumentSize = 25 * 1024 * 1024 // 25 MiB plafond voor ruwe downloads.
+const maxDocumentSize = 25 * 1024 * 1024 // Upper bound for raw downloads.
 
-// FetchResult bevat ruwe bytes en basale metadata.
+// FetchResult bundles raw bytes and associated metadata.
 type FetchResult struct {
 	Body        []byte
 	ContentType string
@@ -22,7 +22,7 @@ type FetchResult struct {
 	URL         string
 }
 
-// SuspectedDocumentType leidt documenttype af op basis van headers of bestandsextensie.
+// SuspectedDocumentType attempts to infer the document type from headers or extension.
 func (r FetchResult) SuspectedDocumentType() string {
 	ct := strings.ToLower(r.ContentType)
 	switch {
@@ -51,14 +51,14 @@ func (r FetchResult) SuspectedDocumentType() string {
 	}
 }
 
-// Fetcher downloadt documenten met retry- en timeoutbeleid.
+// Fetcher downloads documents with retry and timeout handling.
 type Fetcher struct {
 	client     *http.Client
 	maxRetries int
 	retryDelay time.Duration
 }
 
-// NewFetcher maakt een fetcher aan met gegeven retrycount en client-timeout.
+// NewFetcher constructs a fetcher using the provided retry count and timeout.
 func NewFetcher(maxRetries int, timeout time.Duration) *Fetcher {
 	if maxRetries < 0 {
 		maxRetries = 0
@@ -76,7 +76,7 @@ func NewFetcher(maxRetries int, timeout time.Duration) *Fetcher {
 	}
 }
 
-// Fetch haalt een document op en houdt rekening met retrybare fouten.
+// Fetch downloads a document while honoring retryable failures.
 func (f *Fetcher) Fetch(ctx context.Context, targetURL string) (*FetchResult, error) {
 	var lastErr error
 	for attempt := 0; attempt <= f.maxRetries; attempt++ {

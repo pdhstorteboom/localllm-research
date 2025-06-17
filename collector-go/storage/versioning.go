@@ -10,7 +10,7 @@ import (
 	"collector-go/models"
 )
 
-// Decision is het resultaat van een versie-evaluatie.
+// Decision represents the outcome of a version evaluation.
 type Decision string
 
 const (
@@ -19,7 +19,7 @@ const (
 	DecisionDuplicate  Decision = "duplicate"
 )
 
-// VersionDecision beschrijft hoe een document moet worden opgeslagen.
+// VersionDecision describes how the document should be persisted.
 type VersionDecision struct {
 	Decision     Decision
 	Version      int
@@ -31,14 +31,14 @@ type versionEntry struct {
 	Version    int    `json:"version"`
 }
 
-// VersionTracker bewaart persistente informatie over versies per bron.
+// VersionTracker tracks versions per source across executions.
 type VersionTracker struct {
 	mu      sync.Mutex
 	path    string
 	entries map[string]versionEntry
 }
 
-// NewVersionTracker laadt of initialiseert versie-informatie in basePath.
+// NewVersionTracker loads or bootstraps the version index on disk.
 func NewVersionTracker(basePath string) (*VersionTracker, error) {
 	indexPath := filepath.Join(basePath, "version_index.json")
 	entries := make(map[string]versionEntry)
@@ -57,7 +57,7 @@ func NewVersionTracker(basePath string) (*VersionTracker, error) {
 	}, nil
 }
 
-// Evaluate beslist of een document nieuw, een nieuwe versie of een duplicaat is.
+// Evaluate determines whether content is new, a new version, or a duplicate.
 func (v *VersionTracker) Evaluate(meta models.DocumentMetadata, contentHash string) (VersionDecision, error) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
