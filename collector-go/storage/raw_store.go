@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,7 +11,7 @@ import (
 	"collector-go/models"
 )
 
-// RawStore bewaart ruwe documenten en metadata gescheiden.
+// RawStore persists raw documents and metadata independently.
 type RawStore struct {
 	basePath     string
 	rawDir       string
@@ -22,7 +20,7 @@ type RawStore struct {
 	metadataPerm os.FileMode
 }
 
-// NewRawStore initialiseert opslagmappen voor raw en metadata.
+// NewRawStore prepares the folders used for raw data and metadata.
 func NewRawStore(basePath string) (*RawStore, error) {
 	rawDir := filepath.Join(basePath, "raw")
 	metaDir := filepath.Join(basePath, "metadata")
@@ -43,18 +41,19 @@ func NewRawStore(basePath string) (*RawStore, error) {
 	}, nil
 }
 
-// Save slaat het ruwe document en een metadatarecord op.
+// Save writes raw data and its metadata entry.
 func (s *RawStore) Save(data []byte, meta models.DocumentMetadata) (models.DocumentMetadata, error) {
 	if len(data) == 0 {
 		return meta, errors.New("geen data om op te slaan")
 	}
+	if meta.ContentHash == "" {
+		return meta, errors.New("content hash ontbreekt voor opslag")
+	}
 
-	hash := sha256.Sum256(data)
-	meta.ContentHash = hex.EncodeToString(hash[:])
 	meta.ContentLength = len(data)
 	meta.RetrievedAt = meta.RetrievedAt.UTC()
 
-	rawFile := filepath.Join(s.rawDir, meta.ContentHash+".bin")
+	rawFile := s.rawPath(meta.ContentHash)
 	if _, err := os.Stat(rawFile); errors.Is(err, os.ErrNotExist) {
 		if err := os.WriteFile(rawFile, data, s.permissions); err != nil {
 			return meta, err
@@ -62,16 +61,41 @@ func (s *RawStore) Save(data []byte, meta models.DocumentMetadata) (models.Docum
 	}
 	meta.StoragePath = rawFile
 
+	if err := s.writeMetadata(meta); err != nil {
+		return meta, err
+	}
+	return meta, nil
+}
+
+// RecordMetadata stores an additional metadata entry for existing raw data.
+func (s *RawStore) RecordMetadata(meta models.DocumentMetadata) error {
+	if meta.ContentHash == "" {
+		return errors.New("content hash ontbreekt voor metadata")
+	}
+	meta.RetrievedAt = meta.RetrievedAt.UTC()
+	if meta.StoragePath == "" {
+		meta.StoragePath = s.rawPath(meta.ContentHash)
+	}
+	return s.writeMetadata(meta)
+}
+
+// RawPath returns the path under which a hash is stored.
+func (s *RawStore) RawPath(hash string) string {
+	return s.rawPath(hash)
+}
+
+func (s *RawStore) rawPath(hash string) string {
+	return filepath.Join(s.rawDir, hash+".bin")
+}
+
+func (s *RawStore) writeMetadata(meta models.DocumentMetadata) error {
 	metaFile := filepath.Join(
 		s.metadataDir,
 		fmt.Sprintf("%s-%d.json", meta.ContentHash, time.Now().UTC().UnixNano()),
 	)
 	payload, err := json.MarshalIndent(meta, "", "  ")
 	if err != nil {
-		return meta, err
+		return err
 	}
-	if err := os.WriteFile(metaFile, payload, s.metadataPerm); err != nil {
-		return meta, err
-	}
-	return meta, nil
+	return os.WriteFile(metaFile, payload, s.metadataPerm)
 }
