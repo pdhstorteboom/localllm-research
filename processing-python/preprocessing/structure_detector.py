@@ -67,3 +67,18 @@ class StructureDetector:
             financial_terms=contains_finance,
         )
 
+    def _has_financial_terms(self, section: NormalizedSection) -> bool:
+            haystack = " ".join(filter(None, [section.title, *section.paragraphs])).lower()
+            return any(term in haystack for term in self.finance_terms)
+
+        @staticmethod
+        def _detect_language(text: str) -> Optional[str]:
+            try:
+                return langdetect.detect(text)
+            except (langdetect.lang_detect_exception.LangDetectException, ValueError):  # type: ignore
+                return None
+
+        @staticmethod
+        def _estimate_tokens(text: str) -> int:
+            # Rough heuristic aligned with 4 characters per token to keep compute light.
+            return max(1, len(text) // 4)
