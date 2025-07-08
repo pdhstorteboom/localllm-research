@@ -25,3 +25,19 @@ class DocumentFeatures:
             "sections": self.sections,
             "financial_terms": self.financial_terms,
         }
+
+class FeatureExtractor:
+    """Calculates document features from normalized sections."""
+
+    def __init__(self) -> None:
+        self.detector = StructureDetector()
+
+    def extract(self, sections: Iterable[NormalizedSection]) -> DocumentFeatures:
+        signals: StructureSignals = self.detector.analyze(list(sections))
+        return DocumentFeatures(
+            language=signals.language,
+            character_count=signals.character_count,
+            token_estimate=signals.token_estimate,
+            sections=signals.sections,
+            financial_terms=signals.financial_terms,
+        )
