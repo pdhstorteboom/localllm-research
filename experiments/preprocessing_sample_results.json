@@ -1,0 +1,25 @@
+[
+  {
+    "document_id": "doc-001",
+    "original_length": 58234,
+    "cleaned_length": 31890,
+    "token_estimate": 7972,
+    "sections": 12,
+    "language": "en",
+    "financial_terms": true,
+    "errors": []
+  },
+  {
+    "document_id": "doc-002",
+    "original_length": 27411,
+    "cleaned_length": 20984,
+    "token_estimate": 5246,
+    "sections": 7,
+    "language": "nl",
+    "financial_terms": false,
+    "errors": [
+      "Missing appendix section",
+      "Table extraction incomplete"
+    ]
+  }
+]
