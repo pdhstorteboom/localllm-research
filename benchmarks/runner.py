@@ -69,4 +69,7 @@ class BenchmarkRunner:
             raise TimeoutError(f"Task exceeded timeout {self.timeout_s}s")
         return output
 
-    
+    @staticmethod
+    def _estimate_tokens(text: str) -> int:
+        # Same heuristic as preprocessing: 4 characters per token.
+        return max(1, len(text) // 4)
