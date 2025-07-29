@@ -21,3 +21,11 @@ class TaskProfile:
             "samples": self.samples,
         }
 
+
+@dataclass
+class ModelProfile:
+    model_id: str
+    tasks: Dict[str, TaskProfile] = field(default_factory=dict)
+
+    def as_dict(self) -> Dict[str, Dict[str, float]]:
+        return {task: profile.as_dict() for task, profile in self.tasks.items()}
