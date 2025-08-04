@@ -27,3 +27,20 @@ class ProfileAggregator:
 
         return grouped
 
+    @staticmethod
+    def _summarize(results: Iterable[BenchmarkResult]) -> TaskProfile:
+        results_list = list(results)
+        total_latency = sum(r.duration_ms() for r in results_list)
+        total_tokens = sum(r.input_tokens + r.output_tokens for r in results_list)
+        error_count = sum(1 for r in results_list if r.error)
+        samples = len(results_list)
+
+        if samples == 0:
+            return TaskProfile()
+
+        return TaskProfile(
+            latency_ms=total_latency / samples,
+            tokens=total_tokens / samples,
+            error_rate=error_count / samples,
+            samples=samples,
+        )
