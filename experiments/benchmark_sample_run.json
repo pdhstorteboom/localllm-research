@@ -1,0 +1,46 @@
+[
+  {
+    "model_id": "local-llm-small",
+    "task_type": "classification",
+    "document_id": "news-0001",
+    "started_at": 1714406400.101,
+    "finished_at": 1714406400.387,
+    "input_tokens": 1120,
+    "output_tokens": 48,
+    "error": null,
+    "duration_ms": 286.0
+  },
+  {
+    "model_id": "local-llm-large",
+    "task_type": "classification",
+    "document_id": "news-0001",
+    "started_at": 1714406400.414,
+    "finished_at": 1714406401.022,
+    "input_tokens": 1120,
+    "output_tokens": 52,
+    "error": null,
+    "duration_ms": 608.0
+  },
+  {
+    "model_id": "local-llm-small",
+    "task_type": "extraction",
+    "document_id": "report-2023-Q4",
+    "started_at": 1714406410.003,
+    "finished_at": 1714406412.297,
+    "input_tokens": 8640,
+    "output_tokens": 312,
+    "error": null,
+    "duration_ms": 2294.0
+  },
+  {
+    "model_id": "local-llm-large",
+    "task_type": "extraction",
+    "document_id": "report-2023-Q4",
+    "started_at": 1714406412.511,
+    "finished_at": 1714406414.620,
+    "input_tokens": 8640,
+    "output_tokens": 355,
+    "error": "ValidationError: Missing EBITDA field",
+    "duration_ms": 2109.0
+  }
+]
