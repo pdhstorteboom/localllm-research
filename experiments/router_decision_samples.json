@@ -1,0 +1,54 @@
+[
+  {
+    "document_features": {
+      "language": "en",
+      "character_count": 28934,
+      "token_estimate": 7233,
+      "sections": 9,
+      "financial_terms": true
+    },
+    "task_type": "extraction",
+    "constraints": {
+      "max_latency_ms": 2500,
+      "max_tokens": 10000,
+      "hardware_slot": "gpu-a"
+    },
+    "chosen_model": "local-llm-small",
+    "candidates": [
+      {
+        "model_id": "local-llm-small",
+        "reason": "context capacity 9200 ok; latency ok; lowest failure rate"
+      },
+      {
+        "model_id": "local-llm-large",
+        "reason": "context capacity 15000 ok; latency exceeded"
+      }
+    ]
+  },
+  {
+    "document_features": {
+      "language": "nl",
+      "character_count": 8421,
+      "token_estimate": 2050,
+      "sections": 4,
+      "financial_terms": false
+    },
+    "task_type": "classification",
+    "constraints": {
+      "max_latency_ms": 500,
+      "max_tokens": 4000,
+      "hardware_slot": "cpu-b"
+    },
+    "chosen_model": "local-llm-small",
+    "candidates": [
+      {
+        "model_id": "local-llm-small",
+        "reason": "context capacity 3000 ok; latency ok; lowest failure rate"
+      },
+      {
+        "model_id": "local-llm-large",
+        "reason": "context capacity 12000 ok; latency exceeded"
+      }
+    ]
+  }
+]
