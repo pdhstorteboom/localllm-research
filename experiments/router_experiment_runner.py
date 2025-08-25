@@ -54,3 +54,34 @@ def fake_model_profiles() -> List[CandidateModel]:
         CandidateModel(model_id="local-llm-large", profile=large_profile, expected_latency_ms=600, failure_rate=0.08),
     ]
 
+def run_experiment(output_path: str) -> None:
+    logger = RouterLogger(output_path=output_path)
+    router = HeuristicRouter()
+    documents = load_document_features("experiments/router_decision_samples.json")
+    results = []
+
+    for document in documents:
+        candidates = fake_model_profiles()
+        inputs = RouterInputs(
+            document_features=document,
+            task_type=TaskType.EXTRACTION,
+            candidate_models=candidates,
+            constraints=Constraints(max_latency_ms=2500, max_tokens=12000),
+        )
+        decision = router.route(inputs, min_context_tokens=2048)
+        logger.record(inputs, decision)
+        results.append(
+            {
+                "language": document.language,
+                "token_estimate": document.token_estimate,
+                "chosen_model": decision.model_id,
+                "reason": decision.reason,
+            }
+        )
+
+    logger.flush()
+    Path("experiments/router_experiment_results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    run_experiment("experiments/router_decision_samples.json")
