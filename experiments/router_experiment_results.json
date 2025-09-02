@@ -1,0 +1,14 @@
+[
+  {
+    "language": "en",
+    "token_estimate": 7233,
+    "chosen_model": "local-llm-small",
+    "reason": "Selected based on context capacity 9200 ok; latency ok; lowest failure rate"
+  },
+  {
+    "language": "nl",
+    "token_estimate": 2050,
+    "chosen_model": "local-llm-small",
+    "reason": "Selected based on context capacity 3000 ok; latency ok; lowest failure rate"
+  }
+]
