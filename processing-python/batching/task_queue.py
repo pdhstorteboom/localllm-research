@@ -33,4 +33,23 @@ class TaskQueue:
             if task_type and candidate.task_type != task_type:
                 buffer.append(candidate)
                 continue
-            
+            batch.append(candidate)
+
+        for task in buffer:
+            heapq.heappush(self._heap, task)
+
+        return batch
+
+    def group_for_batching(self, max_tokens: int) -> Dict[str, List[LlmTask]]:
+        grouped: Dict[str, List[LlmTask]] = defaultdict(list)
+        temp_heap = list(self._heap)
+        heapq.heapify(temp_heap)
+
+        while temp_heap:
+            task = heapq.heappop(temp_heap)
+            key = task.target_model or (task.constraints.preferred_model or "unspecified")
+            current_tokens = sum(t.token_estimate for t in grouped[key])
+            if current_tokens + task.token_estimate <= max_tokens:
+                grouped[key].append(task)
+
+        return grouped
