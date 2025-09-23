@@ -74,3 +74,11 @@ class BatchPlanner:
                 )
 
         return plans
+
+    @staticmethod
+    def _group_by_model(tasks: List[LlmTask]) -> Dict[str, List[LlmTask]]:
+        grouped: Dict[str, List[LlmTask]] = {}
+        for task in tasks:
+            key = task.target_model or task.constraints.preferred_model or "unspecified"
+            grouped.setdefault(key, []).append(task)
+        return grouped
