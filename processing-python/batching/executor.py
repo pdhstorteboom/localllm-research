@@ -46,3 +46,20 @@ class BatchExecutor:
                     except ExecutionError as fallback_exc:
                         results.append(BatchResult(plan=fallback_plan, success=False, error=str(fallback_exc)))
         return results
+
+    def _fallback(self, plan: BatchPlan, reason: str) -> List[BatchPlan]:
+        logger.warning("Batch failed: %s", reason)
+        if "OOM" in reason.upper():
+            return self._split_batch(plan)
+        if self.fallback_fn:
+            self.fallback_fn(plan.tasks)
+        return []
+
+    def _split_batch(self, plan: BatchPlan) -> List[BatchPlan]:
+        if len(plan.tasks) <= 1:
+            return []
+        mid = len(plan.tasks) // 2
+        return [
+            BatchPlan(model_id=plan.model_id, tasks=plan.tasks[:mid], total_tokens=sum(t.token_estimate for t in plan.tasks[:mid]), reason="Fallback split part A"),
+            BatchPlan(model_id=plan.model_id, tasks=plan.tasks[mid:], total_tokens=sum(t.token_estimate for t in plan.tasks[mid:]), reason="Fallback split part B"),
+        ]
