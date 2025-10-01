@@ -1,0 +1,42 @@
+[
+  {
+    "model_id": "local-llm-small",
+    "batch_size": 3,
+    "estimated_tokens": 6500,
+    "actual_tokens": 6320,
+    "gpu_free_memory_mb": 7800,
+    "success": true,
+    "error": null,
+    "reason": "Batch finalization"
+  },
+  {
+    "model_id": "local-llm-large",
+    "batch_size": 2,
+    "estimated_tokens": 12000,
+    "actual_tokens": 11840,
+    "gpu_free_memory_mb": 4200,
+    "success": false,
+    "error": "ExecutionError: OOM",
+    "reason": "Batch closed due to size or token limit"
+  },
+  {
+    "model_id": "local-llm-large",
+    "batch_size": 1,
+    "estimated_tokens": 6000,
+    "actual_tokens": 5920,
+    "gpu_free_memory_mb": 5100,
+    "success": true,
+    "error": null,
+    "reason": "Fallback split part A"
+  },
+  {
+    "model_id": "local-llm-large",
+    "batch_size": 1,
+    "estimated_tokens": 6000,
+    "actual_tokens": 5920,
+    "gpu_free_memory_mb": 5050,
+    "success": true,
+    "error": null,
+    "reason": "Fallback split part B"
+  }
+]
