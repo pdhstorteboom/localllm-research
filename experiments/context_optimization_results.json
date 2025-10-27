@@ -1,0 +1,12 @@
+{
+  "token_before": 76,
+  "token_after": 38,
+  "selected_sections": [
+    "Management Discussion",
+    "Risk Factors"
+  ],
+  "selection_reasons": [
+    "Included Management Discussion because task requires financial signals",
+    "Included Risk Factors because task requires financial signals"
+  ]
+}
