@@ -1,0 +1,6 @@
+Task: Extract financial entities and metrics from the provided context.
+
+Context:
+{{context}}
+
+Output format: JSON matching schema {{schema_reference}}.

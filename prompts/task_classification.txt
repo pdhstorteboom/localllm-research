@@ -1,0 +1,6 @@
+Task: Classify the document according to the configured taxonomy.
+
+Context:
+{{context}}
+
+Respond with JSON following {{schema_reference}} including confidence scores.
