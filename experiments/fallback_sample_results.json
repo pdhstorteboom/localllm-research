@@ -1,0 +1,20 @@
+[
+  {
+    "case_id": "invalid_json",
+    "action": "reprompt_strict",
+    "reason": "Reprompt with stricter JSON instructions",
+    "model": "local-llm-small"
+  },
+  {
+    "case_id": "schema_mismatch",
+    "action": "reprompt_strict",
+    "reason": "Schema validation failure; enforce stricter JSON response",
+    "model": "local-llm-small"
+  },
+  {
+    "case_id": "inconsistent_context",
+    "action": "shrink_context",
+    "reason": "Consistency failure; reducing context for targeted rerun",
+    "model": "local-llm-large"
+  }
+]
