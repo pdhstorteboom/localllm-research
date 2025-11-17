@@ -1,0 +1,52 @@
+[
+  {
+    "case_id": "invalid_json",
+    "raw_output": "Here is the answer: {invalid json",
+    "extracted_json": null,
+    "validation_errors": [
+      {
+        "type": "decode_error",
+        "reason": "Unexpected character"
+      }
+    ],
+    "chosen_fallback_action": "reprompt_strict"
+  },
+  {
+    "case_id": "schema_mismatch",
+    "raw_output": "{\"entities\":[{\"type\":123,\"value\":\"foo\"}]}",
+    "extracted_json": {
+      "entities": [
+        {
+          "type": 123,
+          "value": "foo"
+        }
+      ]
+    },
+    "validation_errors": [
+      {
+        "type": "type_mismatch",
+        "reason": "type is not of expected type"
+      }
+    ],
+    "chosen_fallback_action": "reprompt_strict"
+  },
+  {
+    "case_id": "inconsistent_context",
+    "raw_output": "{\"entities\":[{\"type\":\"company\",\"value\":\"Nonexistent Corp\"}]}",
+    "extracted_json": {
+      "entities": [
+        {
+          "type": "company",
+          "value": "Nonexistent Corp"
+        }
+      ]
+    },
+    "validation_errors": [
+      {
+        "type": "consistency_failed",
+        "reason": "Entity not present in context"
+      }
+    ],
+    "chosen_fallback_action": "shrink_context"
+  }
+]
