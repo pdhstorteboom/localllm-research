@@ -1,0 +1,27 @@
+[
+  {
+    "document_id": "doc-001",
+    "model_id": "local-llm-small",
+    "router_reason": "Selected based on context capacity 9200 ok; latency ok; lowest failure rate",
+    "batch_events": [
+      "Batch size=3 tokens=6300",
+      "Fallback split triggered"
+    ],
+    "fallback_events": [
+      "retry due to decode_error"
+    ],
+    "validation_status": "passed"
+  },
+  {
+    "document_id": "doc-002",
+    "model_id": "local-llm-large",
+    "router_reason": "Consistency failure; switching model",
+    "batch_events": [
+      "Batch size=2 tokens=11840"
+    ],
+    "fallback_events": [
+      "switch_model triggered"
+    ],
+    "validation_status": "schema_mismatch"
+  }
+]
