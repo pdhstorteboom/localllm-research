@@ -1,4 +1,4 @@
-"""Simple heuristic router for PROCESSING-LLM-01."""
+"""Simple heuristic router for processing-llm."""
 
 from __future__ import annotations
 

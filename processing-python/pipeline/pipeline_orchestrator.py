@@ -1,4 +1,4 @@
-"""Lightweight pipeline orchestrator tying together PROCESSING-LLM-01 stages."""
+"""Lightweight pipeline orchestrator tying together processing-llm stages."""
 
 from __future__ import annotations
 

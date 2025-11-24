@@ -90,7 +90,7 @@ func (f *Fetcher) Fetch(ctx context.Context, targetURL string) (*FetchResult, er
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Set("User-Agent", "PROCESSING-LLM-01-collector/0.1")
+		req.Header.Set("User-Agent", "processing-llm-collector/0.1")
 
 		resp, err := f.client.Do(req)
 		if err != nil {

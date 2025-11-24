@@ -1,5 +1,3 @@
-"""Utilities for logging preprocessing metrics for WBSO experiments."""
-
 from __future__ import annotations
 
 import json

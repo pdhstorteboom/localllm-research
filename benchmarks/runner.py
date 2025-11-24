@@ -1,4 +1,4 @@
-"""Model-agnostic benchmark runner for PROCESSING-LLM-01."""
+"""Model-agnostic benchmark runner for processing-llm."""
 
 from __future__ import annotations
 
