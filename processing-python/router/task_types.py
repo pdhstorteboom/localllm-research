@@ -11,3 +11,4 @@ class TaskType(str, Enum):
     CLASSIFICATION = "classification"
     EXTRACTION = "extraction"
     SUMMARIZATION = "summarization"
+    RAG = "rag"
