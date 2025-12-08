@@ -1,4 +1,4 @@
-"""Task queue supporting batching for local LLM execution."""
+"""Task queue supporting batching for OpenRouter-based LLM execution."""
 
 from __future__ import annotations
 
