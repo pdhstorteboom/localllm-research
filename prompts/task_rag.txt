@@ -1,0 +1,6 @@
+Task: Answer the user question using only the retrieved context below.
+
+Context:
+{{context}}
+
+Respond with JSON following {{schema_reference}} including citations for each answer item.
