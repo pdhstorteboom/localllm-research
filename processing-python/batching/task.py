@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
+from models.model_registry import default_model_for_task
 from router.task_types import TaskType
 
 
@@ -30,3 +31,8 @@ class LlmTask:
     target_model: Optional[str] = field(compare=False, default=None)
     token_estimate: int = field(compare=False, default=0)
     constraints: TaskConstraints = field(compare=False, default_factory=TaskConstraints)
+
+    def __post_init__(self) -> None:
+        if not self.target_model:
+            preferred = self.constraints.preferred_model or default_model_for_task(self.task_type)
+            self.target_model = preferred

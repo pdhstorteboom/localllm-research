@@ -23,6 +23,7 @@ class PromptRenderer:
     TEMPLATE_MAP = {
         TaskType.EXTRACTION: "prompts/task_extract_entities.txt",
         TaskType.CLASSIFICATION: "prompts/task_classification.txt",
+        TaskType.RAG: "prompts/task_rag.txt",
     }
 
     def __init__(self, system_prompt_path: str = "prompts/base_system_prompt.txt") -> None:

@@ -53,4 +53,6 @@ class SectionSelector:
             return f"Included {title} because task requires financial signals"
         if task_type == TaskType.SUMMARIZATION:
             return f"Included {title} to preserve narrative continuity"
+        if task_type == TaskType.RAG:
+            return f"Included {title} to ground retrieval-augmented responses"
         return f"Included {title} based on sequential allocation"
