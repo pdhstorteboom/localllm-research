@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+import logging
+import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable, List, Optional
 
 from preprocessing.cleaner import NormalizedSection
 from features.document_features import DocumentFeatures
+from models.elasticsearch_client import ElasticsearchClient, ElasticsearchError, get_default_elasticsearch_client
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -24,9 +29,16 @@ class PreprocessRecord:
 class PreprocessLogger:
     """Collects preprocessing metrics and writes them as machine-readable JSON."""
 
-    def __init__(self, output_path: str) -> None:
+    def __init__(
+        self,
+        output_path: str,
+        es_client: Optional[ElasticsearchClient] = None,
+        index_name: Optional[str] = None,
+    ) -> None:
         self.output_path = Path(output_path)
         self.records: List[PreprocessRecord] = []
+        self.es_client = es_client or get_default_elasticsearch_client()
+        self.index_name = index_name or os.getenv("ELASTICSEARCH_INDEX_PREPROCESS", "preprocess-records")
 
     def log_result(
         self,
@@ -48,6 +60,7 @@ class PreprocessLogger:
             errors=list(errors or []),
         )
         self.records.append(record)
+        self._index_record(record)
 
     def flush(self) -> None:
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -63,3 +76,11 @@ class PreprocessLogger:
                 chunks.append(section.title)
             chunks.extend(section.paragraphs)
         return "\n".join(chunks)
+
+    def _index_record(self, record: PreprocessRecord) -> None:
+        if not self.es_client:
+            return
+        try:
+            self.es_client.index_document(self.index_name, asdict(record))
+        except ElasticsearchError as exc:
+            logger.warning("Failed to index preprocess record: %s", exc)
