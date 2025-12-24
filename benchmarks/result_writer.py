@@ -1,11 +1,23 @@
-"""Utility to persist benchmark results as JSON."""
+"""Utility to persist benchmark results as JSON and Elasticsearch."""
 
 from __future__ import annotations
 
 import json
+import logging
+import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import List
+import sys
+from typing import List, Optional
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROCESSING_PATH = PROJECT_ROOT / "processing-python"
+if str(PROCESSING_PATH) not in sys.path:
+    sys.path.insert(0, str(PROCESSING_PATH))
+
+from models.elasticsearch_client import ElasticsearchClient, ElasticsearchError, get_default_elasticsearch_client
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -26,15 +38,34 @@ class BenchmarkResult:
 class ResultWriter:
     """Stores benchmark outputs per document."""
 
-    def __init__(self, output_path: str) -> None:
+    def __init__(
+        self,
+        output_path: str,
+        es_client: Optional[ElasticsearchClient] = None,
+        index_name: Optional[str] = None,
+    ) -> None:
         self.output_path = Path(output_path)
         self.records: List[BenchmarkResult] = []
+        self.es_client = es_client or get_default_elasticsearch_client()
+        self.index_name = index_name or os.getenv("ELASTICSEARCH_INDEX_BENCHMARKS", "benchmark-results")
 
     def add(self, result: BenchmarkResult) -> None:
         self.records.append(result)
+        self._index_result(result)
 
     def flush(self) -> None:
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
-        payload = [asdict(record) | {"duration_ms": record.duration_ms()} for record in self.records]
+        payload = [self._result_payload(record) for record in self.records]
         with self.output_path.open("w", encoding="utf-8") as handle:
             json.dump(payload, handle, indent=2, ensure_ascii=False)
+
+    def _result_payload(self, result: BenchmarkResult) -> dict:
+        return asdict(result) | {"duration_ms": result.duration_ms()}
+
+    def _index_result(self, result: BenchmarkResult) -> None:
+        if not self.es_client:
+            return
+        try:
+            self.es_client.index_document(self.index_name, self._result_payload(result))
+        except ElasticsearchError as exc:
+            logger.warning("Failed to index benchmark result: %s", exc)
